@@ -12,4 +12,11 @@ int main() {
 
   std::cout << input << ": command not found" << std::endl;
 
+  while(true) {
+    std::cout << "$ ";
+    std::string input;
+    std::getline(std::cin, input);
+    std::cout << input << ": command not found" << std::endl;
+  }
+
 }
