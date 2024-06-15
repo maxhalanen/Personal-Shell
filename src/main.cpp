@@ -2,9 +2,23 @@
 #include <string>
 #include <sstream>
 #include <filesystem>
+#include <vector>
+#include <algorithm>
+
+enum availTypes{
+  Executable,
+  Builtin,
+  Nonexistent,
+};
 
 
+struct inputType { 
+  availTypes type;
+  std::string pathToDir;
+};
 
+
+std::string find_command_in_path(std::string command, std::string path);
 
 std::string findPath(std::string dir) {
 
@@ -26,6 +40,89 @@ std::string findPath(std::string dir) {
   return (dir +  ": not found");
 }
 
+std::string find_command_executable_path(std::string command) {
+  
+  char *path = getenv("PATH");
+
+  if (path == NULL) {
+    return "";
+  }
+
+  std::string path_acc = "";
+
+  char *p = path;
+
+  while (*p != '\0') {
+
+    if (*p == ':') {
+
+      std::string exec_path = find_command_in_path(command, path_acc);
+
+      if (exec_path != "") {
+
+        return exec_path;
+      }
+      path_acc = "";
+    }
+
+    else {
+      path_acc += *p;
+    }
+    p++;
+  }
+
+  std::string exec_path = find_command_in_path(command, path_acc);
+
+  if (exec_path != "") {
+    return exec_path;
+  }
+
+  return "";
+}
+
+std::string find_command_in_path(std::string command, std::string path) {
+
+  for (const auto &entry : std::filesystem::directory_iterator(path)) {
+
+    if (entry.path() == (path + "/" + command)) {
+
+      return entry.path();
+    }
+  }
+  return "";
+}
+
+inputType findInputType(std::string command) {
+
+  std::vector<std::string> builtin_commands = {"exit", "echo", "type"};
+
+  if(std::find(builtin_commands.begin(), builtin_commands.end(), command) != builtin_commands.end()) { 
+    
+    inputType inp;
+    inp.type = availTypes::Builtin;
+
+    return inp;
+  }
+
+
+  std::string exec_path = find_command_executable_path(command);
+  if (exec_path != "") {
+
+    inputType inp;
+
+    inp.type = Executable;
+
+    inp.pathToDir = exec_path;
+
+    return inp;
+  }
+
+  inputType inp;
+  inp.type = availTypes::Nonexistent;
+
+  return inp;
+}
+
 
 int main() {
   // Flush after every std::cout / std:cerr
@@ -37,6 +134,8 @@ int main() {
     std::cout << "$ ";
     std::string input;
     std::getline(std::cin, input);
+
+    inputType inp = findInputType(input.substr(0, input.find(' ')));
 
     if(input == "exit 0"){
       exit(0);
@@ -53,6 +152,19 @@ int main() {
       }
     }
     else{
+
+      if (inp.type == Executable) {
+
+      std::string command_with_full_path = inp.pathToDir + input.substr(input.find(' '));
+
+      const char *command_ptr = command_with_full_path.c_str();
+
+      system(command_ptr);
+
+      continue;
+
+    }
+
       std::cout << input << ": command not found" << std::endl;
     }
   }
