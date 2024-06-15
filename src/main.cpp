@@ -12,7 +12,6 @@ std::string findPath(std::string dir) {
   std::stringstream ss(pathVar);
   std::string path;
 
-
   while(!ss.eof()) {
 
     std::getline(ss, path, ':');
@@ -23,7 +22,7 @@ std::string findPath(std::string dir) {
       return (dir + " is " + fullPath);
     }
   }
-
+  
   return (dir +  ": not found");
 }
 
@@ -51,7 +50,6 @@ int main() {
       }
       else{
         std::cout << findPath(input.substr(5)) << std::endl;
-        //std::cout << input.substr(5) << ": not found" << std::endl;
       }
     }
     else{
