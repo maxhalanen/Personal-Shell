@@ -125,8 +125,14 @@ inputType findInputType(std::string command) {
   return inp;
 }
 
-std::string pathToDirectory() {
-  
+int cdCheck(std::string cdPath) {
+  if(std::filesystem::exists(cdPath)) {
+    std::filesystem::current_path(cdPath); 
+  } else {
+    std::cout << "cd: " << cdPath << ": No such file or directory";
+    return 1;  
+  }
+  return 0;
 }
 
 int main() {
@@ -144,6 +150,9 @@ int main() {
 
     if(input == "exit 0"){
       exit(0);
+    }
+    else if(input.compare(0, 2, "cd") == 0) {
+      cdCheck(input.substr(3));
     }
     else if(input.compare(0, 3, "pwd") == 0) {
       char buffer[PATH_MAX];
