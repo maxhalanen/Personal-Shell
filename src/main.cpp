@@ -126,20 +126,34 @@ inputType findInputType(std::string command) {
 }
 
 int cdCheck(std::string cdPath) {
-  if(std::filesystem::exists(cdPath)) {
-    std::filesystem::current_path(cdPath); 
-  } else {
-    std::cout << "cd: " << cdPath << ": No such file or directory" << std::endl;
-    return 1;  
-  }
-  return 0;
+    if (cdPath == "~") {
+      char *homepath = std::getenv("HOME");
+      if (homepath) {
+        std::filesystem::current_path(homepath);
+        return 0;
+      } 
+      else {
+        std::cerr << "cd: HOME not set" << std::endl;
+        return 1;
+      }
+    }
+
+    if(std::filesystem::exists(cdPath)) {
+      std::filesystem::current_path(cdPath); 
+    } 
+    else {
+      std::cout << "cd: " << cdPath << ": No such file or directory" << std::endl;
+      return 1;  
+    }
+    return 0;
 }
+
 
 int addPath(std::string pathAddition) {
   std::string currPath = std::filesystem::current_path();
 
   std::string newPath = currPath + pathAddition;
-  
+
   std::filesystem::current_path(newPath);
 }
 
@@ -164,6 +178,7 @@ int main() {
         addPath(input.substr(4));
       }
       cdCheck(input.substr(3));
+      
     }
     else if(input.compare(0, 3, "pwd") == 0) {
       char buffer[PATH_MAX];
@@ -182,15 +197,15 @@ int main() {
     }
     else{
 
-      if (inp.type == Executable) {
+    if (inp.type == Executable) {
 
-      std::string command_with_full_path = inp.pathToDir + input.substr(input.find(' '));
+    std::string command_with_full_path = inp.pathToDir + input.substr(input.find(' '));
 
-      const char *command_ptr = command_with_full_path.c_str();
+    const char *command_ptr = command_with_full_path.c_str();
 
-      system(command_ptr);
+    system(command_ptr);
 
-      continue;
+    continue;
 
     }
 
