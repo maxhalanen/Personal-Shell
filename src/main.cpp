@@ -129,7 +129,7 @@ int cdCheck(std::string cdPath) {
   if(std::filesystem::exists(cdPath)) {
     std::filesystem::current_path(cdPath); 
   } else {
-    std::cout << "cd: " << cdPath << ": No such file or directory" << endl;
+    std::cout << "cd: " << cdPath << ": No such file or directory" << std::endl;
     return 1;  
   }
   return 0;
