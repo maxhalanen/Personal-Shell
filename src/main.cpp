@@ -135,6 +135,14 @@ int cdCheck(std::string cdPath) {
   return 0;
 }
 
+int addPath(std::string pathAddition) {
+  std::string currPath = std::filesystem::current_path();
+
+  std::string newPath = currPath + pathAddition;
+  
+  std::filesystem::current_path(newPath);
+}
+
 int main() {
   // Flush after every std::cout / std:cerr
   std::cout << std::unitbuf;
@@ -152,6 +160,9 @@ int main() {
       exit(0);
     }
     else if(input.compare(0, 2, "cd") == 0) {
+      if(input.compare(4, 5, "./") == 0) {
+        addPath(input.substr(4));
+      }
       cdCheck(input.substr(3));
     }
     else if(input.compare(0, 3, "pwd") == 0) {
