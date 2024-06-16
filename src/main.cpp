@@ -4,8 +4,10 @@
 #include <filesystem>
 #include <vector>
 #include <algorithm>
+#include <unistd.h>
+#include <limits.h>
 
-enum availTypes{
+enum availTypes {
   Executable,
   Builtin,
   Nonexistent,
@@ -123,6 +125,9 @@ inputType findInputType(std::string command) {
   return inp;
 }
 
+std::string pathToDirectory() {
+  
+}
 
 int main() {
   // Flush after every std::cout / std:cerr
@@ -139,6 +144,10 @@ int main() {
 
     if(input == "exit 0"){
       exit(0);
+    }
+    else if(input.compare(0, 3, "pwd") == 0) {
+      char buffer[PATH_MAX];
+      std::cout << getcwd(buffer, sizeof(buffer)) << std::endl;
     }
     else if(input.compare(0, 4, "echo") == 0) {
       std::cout << input.substr(5) << std::endl;
