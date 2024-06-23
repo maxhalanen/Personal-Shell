@@ -155,6 +155,19 @@ int addPath(std::string pathAddition) {
   std::string newPath = currPath + pathAddition;
 
   std::filesystem::current_path(newPath);
+  return 0;
+}
+
+int toParentDir() {
+
+    std::filesystem::path currentPath = std::filesystem::current_path();
+
+    std::filesystem::path parent = currentPath.parent_path();
+    
+
+    std::filesystem::current_path(parent);
+
+    return 0;
 }
 
 int main() {
@@ -177,8 +190,10 @@ int main() {
       if(input.compare(4, 5, "./") == 0) {
         addPath(input.substr(4));
       }
+      else if(input.compare(4, 6, "../") == 0) {
+        toParentDir();
+      }
       cdCheck(input.substr(3));
-      
     }
     else if(input.compare(0, 3, "pwd") == 0) {
       char buffer[PATH_MAX];
@@ -206,10 +221,9 @@ int main() {
     system(command_ptr);
 
     continue;
-
     }
-
       std::cout << input << ": command not found" << std::endl;
     }
+
   }
 }
